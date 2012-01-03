@@ -1,1 +1,1 @@
-from stationary import build, clean
+from stationary import build, clean, serve

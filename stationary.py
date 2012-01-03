@@ -139,3 +139,36 @@ def clean():
         shutil.rmtree(config.OUT_PATH)
     except OSError:
         print '%s could not be deleted.' % config.OUT_PATH
+
+
+def serve():
+    from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
+
+    MIMETYPES = {
+        '.css': 'text/css',
+        '.html': 'text/html',
+        '.js': 'application/javascript',
+    }
+
+    class Handler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            path = self.path[1:]
+            path = os.path.join(config.OUT_PATH, path)
+            if self.path[-1] == '/':
+                path = os.path.join(path, 'index.html')
+            f = open(path)
+            self.send_response(200)
+
+            __, ext = os.path.splitext(self.path)
+            mimetype = MIMETYPES.get(ext, 'text/html')
+            self.send_header('Content-type', mimetype)
+            self.end_headers()
+            self.wfile.write(f.read())
+            f.close()
+            return
+
+    PORT = 8000
+
+    server = HTTPServer(('', PORT), Handler)
+    print "Serving at port", PORT
+    server.serve_forever()
