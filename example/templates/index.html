@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+	<ol id="post_list">
+		{% for post in blog.posts %}
+			<li>
+				<h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
+				<p class="meta"><time>{{ post.pub_date.strftime('%Y-%m-%d') }}</time></p>
+			</li>
+		{% endfor %}
+	</ol>
+{% endblock %}

@@ -1,0 +1,49 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+body {
+	background: #fff;
+	color: #333;
+	font: 100%/1.5em "Helvetica Neue",Arial,Helvetica,sans-serif;
+	padding: 3em;
+}
+
+a {
+	color: #00c;
+}
+
+h1 {
+	font-size: 2em;
+	line-height: 1.5em;
+	padding: 0 0 0.75em;
+}
+h2 {
+	font-size: 1.25em;
+	line-height: 1.2em;
+	padding: 0 0 0.6em;
+}
+p {
+	padding: 0 0 1.5em;
+}
+
+header nav {
+	margin: -1.5em 0 1.5em;
+}
+header nav ul {
+	list-style: none;
+}
+header nav ul li {
+	display: inline;
+}
+
+footer {
+	color: #ccc;
+}
+
+#post_list {
+	list-style: none;
+}
+#post_list .meta {
+	color: #999;
+}
