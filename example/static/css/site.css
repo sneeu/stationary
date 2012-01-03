@@ -39,11 +39,20 @@ header nav ul li {
 
 footer {
 	color: #ccc;
+	padding: 1.5em 0 0;
 }
 
-#post_list {
+.post_body {
+	font-family: Georgia,"Times New Roman",Times,serif;
+}
+
+.code {
+	padding: 1.5em 0;
+}
+
+.post_list {
 	list-style: none;
 }
-#post_list .meta {
+.post_list .meta {
 	color: #999;
 }

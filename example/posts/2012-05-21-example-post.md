@@ -14,3 +14,9 @@ nibh. Aliquam vitae purus vitae ipsum mollis bibendum. Vestibulum magna metus,
 adipiscing ut imperdiet quis, suscipit non neque. Nunc tincidunt lectus non
 lacus porta facilisis id congue nisi. Aliquam pretium, mi at porta adipiscing,
 tortor ligula fringilla mi, venenatis aliquam orci ante vel diam.
+
+[sourcecode:python]
+    class Project(object):
+        def __init__(self, title):
+            self.title = title
+[/sourcecode]

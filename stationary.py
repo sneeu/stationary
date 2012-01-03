@@ -3,12 +3,31 @@ import shutil
 import jinja2
 import markdown2 as markdown
 import os.path
+from pygments import highlight
+from pygments.formatters import HtmlFormatter
+from pygments.lexers import get_lexer_by_name, TextLexer
+
 import re
 import yaml
 
 
 POST_HEADER_SEP_RE = re.compile('^---$', re.MULTILINE)
 DATE_FORMAT = '%Y-%m-%d %H:%M'
+SOURCECODE_RE = re.compile(
+    r'\[sourcecode:(.+?)\](.+?)\[/sourcecode\]', re.S)
+
+
+def pygments_preprocess(lines):
+    formatter = HtmlFormatter(noclasses=False)
+    def repl(m):
+        try:
+            lexer = get_lexer_by_name(m.group(1))
+        except ValueError:
+            lexer = TextLexer()
+        code = highlight(m.group(2), lexer, formatter)
+        code = code.replace('\n\n', '\n&nbsp;\n').strip().replace('\n', '<br />')
+        return '\n\n<div class="code">%s</div>\n\n' % code
+    return SOURCECODE_RE.sub(repl, lines)
 
 
 class Blog(object):
@@ -64,7 +83,7 @@ def post_from_filename(filename):
     headers, content = re.split(POST_HEADER_SEP_RE, post_data, 1)
 
     headers = yaml.load(headers)
-    content = markdown.markdown(content).strip()
+    content = markdown.markdown(pygments_preprocess(content)).strip()
 
     pub_date = headers['date']
     title = headers['title']
@@ -86,7 +105,7 @@ def blog_from_path(title, path):
     return Blog(title, list(reversed(sorted(posts))))
 
 
-def build_site():
+def build():
     blog = blog_from_path(config.TITLE, config.IN_PATH)
     environment = jinja2.Environment(
         loader=jinja2.FileSystemLoader(

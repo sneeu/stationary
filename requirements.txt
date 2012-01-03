@@ -1,0 +1,5 @@
+Fabric==1.2.2
+Jinja2==2.6
+markdown2==1.0.1.19
+PyYAML==3.10
+Pygments==1.4
