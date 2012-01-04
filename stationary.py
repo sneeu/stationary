@@ -143,7 +143,6 @@ def page_from_filename(filename, base_path):
 def pages_from_path(path):
     pages = []
     for dirname, folders, filenames in os.walk(path):
-        print dirname
         for filename in filenames:
             page_path = os.path.join(dirname, filename)
             pages.append(page_from_filename(page_path, path))
