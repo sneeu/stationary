@@ -76,9 +76,26 @@ class Post(object):
             config.POST_URL.format(post=self), )
 
 
+class Page(object):
+    def __init__(self, path, content, meta_data=None):
+        self._path = path
+        self.content = content
+        self.meta_data = meta_data
+
+    @property
+    def path(self):
+        return '%s%s/index.html' % (
+            config.OUT_PATH,
+            self._path, )
+
+    @property
+    def url(self):
+        return '/%s/' % (self._path, )
+
+
 def post_from_filename(filename):
-    with open(filename) as post:
-        post_data = post.read()
+    with open(filename) as post_file:
+        post_data = post_file.read()
 
     headers, content = re.split(POST_HEADER_SEP_RE, post_data, 1)
 
@@ -105,6 +122,34 @@ def blog_from_path(title, path):
     return Blog(title, list(reversed(sorted(posts))))
 
 
+def page_from_filename(filename, base_path):
+    with open(filename) as page_file:
+        page_data = page_file.read()
+
+    header, content = re.split(POST_HEADER_SEP_RE, page_data, 1)
+
+    meta_data = yaml.load(header)
+    content = markdown.markdown(pygments_preprocess(content)).strip()
+
+    slug, __ = os.path.splitext(os.path.relpath(filename, base_path))
+
+    match = re.match('\d{4}-\d{2}-\d{2}-(.+)', slug)
+    if match:
+        slug = match.group(1)
+
+    return Page(slug, content, meta_data=meta_data)
+
+
+def pages_from_path(path):
+    pages = []
+    for dirname, folders, filenames in os.walk(path):
+        print dirname
+        for filename in filenames:
+            page_path = os.path.join(dirname, filename)
+            pages.append(page_from_filename(page_path, path))
+    return pages
+
+
 def build():
     blog = blog_from_path(config.TITLE, config.IN_PATH)
     environment = jinja2.Environment(
@@ -117,6 +162,14 @@ def build():
         config.OUT_PATH)
 
     # Render static pages
+    pages = pages_from_path(os.path.join(config.IN_PATH, 'pages/'))
+    for page in pages:
+        page_template_name = page.meta_data.get('template', 'page.html')
+        page_template = environment.get_template(page_template_name)
+        if not os.path.isdir(os.path.dirname(page.path)):
+            os.makedirs(os.path.dirname(page.path))
+        with open(page.path, 'w') as out_file:
+            out_file.write(page_template.render(page=page))
 
     # Render the base blog page
     blog_template = environment.get_template('index.html')
